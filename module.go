@@ -1,6 +1,7 @@
 package mod
 
 import (
+	"io/fs"
 	gopath "path"
 	"path/filepath"
 
@@ -10,6 +11,7 @@ import (
 type Module struct {
 	dir  string
 	file *modfile.File
+	fs.FS
 }
 
 func (m *Module) Directory(subpaths ...string) string {

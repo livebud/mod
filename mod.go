@@ -69,10 +69,8 @@ func Parse(path string, data []byte) (*Module, error) {
 		}
 		return nil, fmt.Errorf("mod: missing module statement in %q, received %q", path, string(modFile))
 	}
-	return &Module{
-		dir:  filepath.Dir(path),
-		file: modfile,
-	}, nil
+	dir := filepath.Dir(path)
+	return &Module{dir, modfile, os.DirFS(dir)}, nil
 }
 
 // Lookup finds the absolute path of the go.mod file in the given directory
