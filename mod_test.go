@@ -12,8 +12,17 @@ func TestFind(t *testing.T) {
 	is := is.New(t)
 	wd, err := os.Getwd()
 	is.NoErr(err)
-	module, err := mod.Find(wd)
+	module, err := mod.Find()
 	is.NoErr(err)
+	is.Equal(wd, module.Directory())
+	is.Equal(module.Import(), "github.com/livebud/mod")
+}
+
+func TestMustFind(t *testing.T) {
+	is := is.New(t)
+	wd, err := os.Getwd()
+	is.NoErr(err)
+	module := mod.MustFind(wd)
 	is.Equal(wd, module.Directory())
 	is.Equal(module.Import(), "github.com/livebud/mod")
 }

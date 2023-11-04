@@ -37,11 +37,30 @@ func New(dir string) *Module {
 	return module
 }
 
-func Find(directory string) (*Module, error) {
+// Find the first go.mod file in one of the directories below or return an
+// error. Find will also search parent directories for a go.mod file.
+func Find(dirs ...string) (*Module, error) {
+	if len(dirs) == 0 {
+		return find(".")
+	}
+	for _, dir := range dirs {
+		module, err := find(dir)
+		if err != nil {
+			if !errors.Is(err, ErrFileNotFound) {
+				return nil, err
+			}
+			continue
+		}
+		return module, nil
+	}
+	return nil, ErrFileNotFound
+}
+
+func find(dir string) (*Module, error) {
 	if isEmbedded {
 		return Parse(filepath.Join(dir, "go.mod"), []byte(`module `+path))
 	}
-	abs, err := filepath.Abs(directory)
+	abs, err := filepath.Abs(dir)
 	if err != nil {
 		return nil, err
 	}
@@ -54,6 +73,16 @@ func Find(directory string) (*Module, error) {
 		return nil, fmt.Errorf(`mod: unable to read "go.mod": %w`, err)
 	}
 	return Parse(modPath, data)
+}
+
+// MustFind a go.mod file in this directory or any parent directory. If no
+// go.mod file is found, this will panic.
+func MustFind(directory string) *Module {
+	module, err := Find(directory)
+	if err != nil {
+		panic(err)
+	}
+	return module
 }
 
 // Parse a go.mod file
