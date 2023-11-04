@@ -77,8 +77,8 @@ func find(dir string) (*Module, error) {
 
 // MustFind a go.mod file in this directory or any parent directory. If no
 // go.mod file is found, this will panic.
-func MustFind(directory string) *Module {
-	module, err := Find(directory)
+func MustFind(dirs ...string) *Module {
+	module, err := Find(dirs...)
 	if err != nil {
 		panic(err)
 	}
