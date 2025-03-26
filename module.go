@@ -31,6 +31,11 @@ func (m *Module) Import(subpaths ...string) string {
 	return gopath.Join(modulePath, subPath)
 }
 
+// Contains checks if the module contains the import path.
+func (m *Module) Contains(importPath string) bool {
+	return contains(m.Import(), importPath)
+}
+
 // ResolveImport returns an import path from a local directory.
 func (m *Module) ResolveImport(dir string) (importPath string, err error) {
 	return m.resolveImport(dir, true)
@@ -88,7 +93,7 @@ func (m *Module) ResolveDir(importPath string) (dir string, err error) {
 	for _, req := range m.file.Require {
 		if contains(req.Mod.Path, importPath) {
 			relPath := strings.TrimPrefix(importPath, req.Mod.Path)
-			dir, err := getModuleDirectory(req.Mod.Path, req.Mod.Version)
+			dir, err := getModuleDir(req.Mod.Path, req.Mod.Version)
 			if err != nil {
 				return "", err
 			}

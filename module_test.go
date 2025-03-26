@@ -12,9 +12,7 @@ import (
 
 func TestReadFile(t *testing.T) {
 	is := is.New(t)
-	wd, err := os.Getwd()
-	is.NoErr(err)
-	module, err := mod.Find(wd)
+	module, err := mod.Find(".")
 	is.NoErr(err)
 	gomod, err := fs.ReadFile(module, "go.mod")
 	is.NoErr(err)
@@ -23,20 +21,26 @@ func TestReadFile(t *testing.T) {
 
 func TestReadDir(t *testing.T) {
 	is := is.New(t)
-	wd, err := os.Getwd()
-	is.NoErr(err)
-	module, err := mod.Find(wd)
+	module, err := mod.Find(".")
 	is.NoErr(err)
 	des, err := fs.ReadDir(module, ".")
 	is.NoErr(err)
 	is.True(len(des) > 0)
 }
 
+func TestContains(t *testing.T) {
+	is := is.New(t)
+	module, err := mod.Find(".")
+	is.NoErr(err)
+	is.True(module.Contains(module.Import()))
+	is.True(module.Contains(module.Import("hello", "world")))
+	is.True(!module.Contains("net/http"))
+	is.True(!module.Contains("github.com/livebud/bud"))
+}
+
 func TestResolveDirRel(t *testing.T) {
 	is := is.New(t)
-	wd, err := os.Getwd()
-	is.NoErr(err)
-	module, err := mod.Find(wd)
+	module, err := mod.Find(".")
 	is.NoErr(err)
 	dir, err := module.ResolveDir(module.Import())
 	is.NoErr(err)
@@ -45,9 +49,7 @@ func TestResolveDirRel(t *testing.T) {
 
 func TestResolveDirStd(t *testing.T) {
 	is := is.New(t)
-	wd, err := os.Getwd()
-	is.NoErr(err)
-	module, err := mod.Find(wd)
+	module, err := mod.Find(".")
 	is.NoErr(err)
 	dir, err := module.ResolveDir("net/http")
 	is.NoErr(err)
@@ -58,9 +60,7 @@ func TestResolveDirStd(t *testing.T) {
 
 func TestResolveDirModCache(t *testing.T) {
 	is := is.New(t)
-	wd, err := os.Getwd()
-	is.NoErr(err)
-	module, err := mod.Find(wd)
+	module, err := mod.Find(".")
 	is.NoErr(err)
 	dir, err := module.ResolveDir("golang.org/x/mod")
 	is.NoErr(err)
@@ -72,11 +72,9 @@ func TestResolveDirModCache(t *testing.T) {
 
 func TestResolveImport(t *testing.T) {
 	is := is.New(t)
-	wd, err := os.Getwd()
+	module, err := mod.Find(".")
 	is.NoErr(err)
-	module, err := mod.Find(wd)
-	is.NoErr(err)
-	im, err := module.ResolveImport(wd)
+	im, err := module.ResolveImport(module.Dir())
 	is.NoErr(err)
 	is.Equal(module.Import(), im)
 }

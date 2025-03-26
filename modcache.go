@@ -27,8 +27,8 @@ func getModCacheDir() string {
 	return modCacheDir
 }
 
-// getModuleDirectory returns an absolute path to the required module.
-func getModuleDirectory(modulePath, version string) (string, error) {
+// getModuleDir returns an absolute path to the required module.
+func getModuleDir(modulePath, version string) (string, error) {
 	enc, err := module.EscapePath(modulePath)
 	if err != nil {
 		return "", err
