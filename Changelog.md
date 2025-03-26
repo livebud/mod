@@ -1,3 +1,7 @@
+# 0.0.4 / 2025-03-25
+
+- add `module.Contains()` function
+
 # 0.0.3 / 2025-03-25
 
 - **BREAKING**: remove embed support
