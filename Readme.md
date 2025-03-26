@@ -7,7 +7,8 @@ A package for finding and manipulating `go.mod` files.
 ## Features
 
 - Recursively traverses up the filesystem looking for `go.mod`
-- Supports binary builds with `-trimpath`
+- Supports resolving import paths to directories
+- Supports resolving directories to import paths
 - Extracted from [Bud](github.com/livebud/bud)
 
 ## Install
@@ -28,21 +29,6 @@ func main() {
   fmt.Println(module.Dir())
   fmt.Println(module.Import())
 }
-```
-
-```sh
-$ go run .
-$GOPATH/src/github.com/livebud/mod
-github.com/livebud/mod
-```
-
-### Binary with `-trimpath`
-
-```sh
-$ go build -trimpath -ldflags " -X github.com/livebud/mod.path=$(go list -m) -X github.com/livebud/mod.dir=$(go list -m -f {{.Dir}})" .
-$ ./main
-$GOPATH/src/github.com/livebud/mod
-github.com/livebud/mod
 ```
 
 ## Contributors
