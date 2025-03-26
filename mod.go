@@ -115,8 +115,8 @@ func lookup(dir string) (path string, err error) {
 	return filepath.EvalSymlinks(path)
 }
 
-// Dir finds the absolute directory that contains the go.mod file
-func Dir(dir string) (absDir string, err error) {
+// Abs finds the absolute directory that contains the go.mod file
+func Abs(dir string) (absDir string, err error) {
 	path, err := lookup(dir)
 	if err != nil {
 		return "", err
