@@ -25,7 +25,7 @@ func main() {
     fmt.Fprintln(os.Stderr, err)
     os.Exit(1)
   }
-  fmt.Println(module.Directory())
+  fmt.Println(module.Dir())
   fmt.Println(module.Import())
 }
 ```

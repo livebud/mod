@@ -1,6 +1,7 @@
 # 0.0.3 / 2025-03-25
 
 - **BREAKING**: remove embed support
+- **BREAKING** rename `module.Directory()` to `mod.Dir()`
 - add `mod.Abs(dir)` to lookup absolute directory
 - add `module.ResolveDir(importPath)` to resolve a directory
 - add `module.ResolveImport(dir)` to resolve an import path
