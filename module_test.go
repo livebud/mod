@@ -31,3 +31,52 @@ func TestReadDir(t *testing.T) {
 	is.NoErr(err)
 	is.True(len(des) > 0)
 }
+
+func TestResolveDirRel(t *testing.T) {
+	is := is.New(t)
+	wd, err := os.Getwd()
+	is.NoErr(err)
+	module, err := mod.Find(wd)
+	is.NoErr(err)
+	dir, err := module.ResolveDir(module.Import())
+	is.NoErr(err)
+	is.Equal(dir, module.Dir())
+}
+
+func TestResolveDirStd(t *testing.T) {
+	is := is.New(t)
+	wd, err := os.Getwd()
+	is.NoErr(err)
+	module, err := mod.Find(wd)
+	is.NoErr(err)
+	dir, err := module.ResolveDir("net/http")
+	is.NoErr(err)
+	// Check the the dir exists
+	_, err = os.Stat(dir)
+	is.NoErr(err)
+}
+
+func TestResolveDirModCache(t *testing.T) {
+	is := is.New(t)
+	wd, err := os.Getwd()
+	is.NoErr(err)
+	module, err := mod.Find(wd)
+	is.NoErr(err)
+	dir, err := module.ResolveDir("golang.org/x/mod")
+	is.NoErr(err)
+	is.True(strings.Contains(dir, "golang.org/x/mod@"))
+	// Check the the dir exists
+	_, err = os.Stat(dir)
+	is.NoErr(err)
+}
+
+func TestResolveImport(t *testing.T) {
+	is := is.New(t)
+	wd, err := os.Getwd()
+	is.NoErr(err)
+	module, err := mod.Find(wd)
+	is.NoErr(err)
+	im, err := module.ResolveImport(wd)
+	is.NoErr(err)
+	is.Equal(module.Import(), im)
+}

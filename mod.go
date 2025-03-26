@@ -15,15 +15,6 @@ import (
 // ErrFileNotFound occurs when no go.mod can be found
 var ErrFileNotFound = fmt.Errorf(`mod: unable to find "go.mod": %w`, fs.ErrNotExist)
 
-// Build with:
-//
-//	go build -trimpath -ldflags " -X github.com/livebud/mod.path=$(go list -m) -X github.com/livebud/mod.dir=$(go list -m -f {{.Dir}})" ./
-var (
-	path       string
-	dir        string
-	isEmbedded = path != "" && dir != ""
-)
-
 // New module
 func New(dir string) *Module {
 	modulePath := modulePathFromGoPath(dir)
@@ -57,14 +48,11 @@ func Find(dirs ...string) (*Module, error) {
 }
 
 func find(dir string) (*Module, error) {
-	if isEmbedded {
-		return Parse(filepath.Join(dir, "go.mod"), []byte(`module `+path))
-	}
-	abs, err := filepath.Abs(dir)
+	absDir, err := filepath.Abs(dir)
 	if err != nil {
 		return nil, err
 	}
-	modPath, err := lookup(abs)
+	modPath, err := lookup(absDir)
 	if err != nil {
 		return nil, err
 	}
@@ -103,31 +91,41 @@ func Parse(path string, data []byte) (*Module, error) {
 }
 
 // Lookup finds the absolute path of the go.mod file in the given directory
-func Lookup(directory string) (path string, err error) {
-	if dir != "" {
-		return filepath.Join(dir, "go.mod"), nil
-	}
-	path, err = lookup(directory)
+func Lookup(dir string) (path string, err error) {
+	path, err = lookup(dir)
 	if err != nil {
 		return "", err
 	}
 	return filepath.Abs(path)
 }
 
-func lookup(directory string) (path string, err error) {
-	path = filepath.Join(directory, "go.mod")
+func lookup(dir string) (path string, err error) {
+	path = filepath.Join(dir, "go.mod")
 	// Check if this path exists, otherwise recursively traverse towards root
 	if _, err = os.Stat(path); err != nil {
 		if !errors.Is(err, fs.ErrNotExist) {
 			return "", err
 		}
-		nextDir := filepath.Dir(directory)
-		if nextDir == directory {
+		nextDir := filepath.Dir(dir)
+		if nextDir == dir {
 			return "", ErrFileNotFound
 		}
 		return lookup(nextDir)
 	}
 	return filepath.EvalSymlinks(path)
+}
+
+// Dir finds the absolute directory that contains the go.mod file
+func Dir(dir string) (absDir string, err error) {
+	path, err := lookup(dir)
+	if err != nil {
+		return "", err
+	}
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		return "", err
+	}
+	return filepath.Dir(absPath), nil
 }
 
 // modulePathFromGoPath tries inferring the module path of directory. This only
