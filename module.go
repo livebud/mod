@@ -61,7 +61,7 @@ func (m *Module) resolveImport(dir string, evalSymlinks bool) (string, error) {
 // ResolveDir resolves an import path to an absolute path.
 func (m *Module) ResolveDir(importPath string) (dir string, err error) {
 	// Handle standard library
-	if inStdlib(importPath) {
+	if InStdlib(importPath) {
 		return m.resolveStdlib(importPath)
 	}
 
