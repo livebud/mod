@@ -1,3 +1,7 @@
+# 0.0.6 / 2025-05-18
+
+- support vendored stdlib packages like golang.org/x/net/dns/dnsmessage
+
 # 0.0.5 / 2025-05-18
 
 - expose mod.InStdlib and update std list
