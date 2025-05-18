@@ -69,6 +69,17 @@ func TestResolveDirInternalStd(t *testing.T) {
 	is.NoErr(err)
 }
 
+func TestResolveDirInternalStdVendor(t *testing.T) {
+	is := is.New(t)
+	module, err := mod.Find(".")
+	is.NoErr(err)
+	dir, err := module.ResolveDir("golang.org/x/net/dns/dnsmessage")
+	is.NoErr(err)
+	// Check the the dir exists
+	_, err = os.Stat(dir)
+	is.NoErr(err)
+}
+
 func TestResolveDirModCache(t *testing.T) {
 	is := is.New(t)
 	module, err := mod.Find(".")

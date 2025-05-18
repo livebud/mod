@@ -3,7 +3,7 @@ package mod
 import (
 	"fmt"
 	"io/fs"
-	gopath "path"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -24,11 +24,11 @@ func (m *Module) Dir(subpaths ...string) string {
 // Import returns the base import path of the module.
 func (m *Module) Import(subpaths ...string) string {
 	modulePath := m.file.Module.Mod.Path
-	subPath := gopath.Join(subpaths...)
+	subPath := path.Join(subpaths...)
 	if modulePath == "std" {
 		return subPath
 	}
-	return gopath.Join(modulePath, subPath)
+	return path.Join(modulePath, subPath)
 }
 
 // Contains checks if the module contains the import path.
@@ -99,6 +99,12 @@ func (m *Module) ResolveDir(importPath string) (dir string, err error) {
 			}
 			return filepath.Join(dir, relPath), nil
 		}
+	}
+
+	// Lastly, check if the import path is a vendored package within stdlib
+	vendoredPath := path.Join("vendor", importPath)
+	if InStdlib(vendoredPath) {
+		return m.resolveStdlib(vendoredPath)
 	}
 
 	return "", fmt.Errorf("mod: unable to resolve directory for import path %q. %w", importPath, fs.ErrNotExist)
