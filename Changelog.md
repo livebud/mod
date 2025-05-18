@@ -1,3 +1,7 @@
+# 0.0.5 / 2025-05-18
+
+- expose mod.InStdlib and update std list
+
 # 0.0.4 / 2025-03-25
 
 - add `module.Contains()` function
