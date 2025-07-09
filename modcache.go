@@ -2,7 +2,6 @@ package mod
 
 import (
 	"fmt"
-	"go/build"
 	"os"
 	"path/filepath"
 
@@ -23,7 +22,7 @@ func getModCacheDir() string {
 		modCacheDir = env
 		return env
 	}
-	modCacheDir = filepath.Join(build.Default.GOPATH, "pkg", "mod")
+	modCacheDir = filepath.Join(GOPATH, "pkg", "mod")
 	return modCacheDir
 }
 

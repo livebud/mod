@@ -17,7 +17,7 @@ var ErrFileNotFound = fmt.Errorf(`mod: unable to find "go.mod": %w`, fs.ErrNotEx
 
 // New module
 func New(dir string) *Module {
-	modulePath := modulePathFromGoPath(dir)
+	modulePath := Infer(dir)
 	if modulePath == "" {
 		modulePath = "change.me"
 	}
@@ -128,13 +128,17 @@ func Abs(dir string) (absDir string, err error) {
 	return filepath.Dir(absPath), nil
 }
 
-// modulePathFromGoPath tries inferring the module path of directory. This only
-// works if you're in working within the $GOPATH
-func modulePathFromGoPath(path string) string {
-	src := filepath.Join(build.Default.GOPATH, "src") + "/"
-	if !strings.HasPrefix(path, src) {
+// GOPATH is the default GOPATH for the current build environment. This is
+// exposed for testing purposes, but should not be changed in production code.
+var GOPATH = build.Default.GOPATH
+
+// Infer the module path from the $GOPATH. This only works if you work inside
+// $GOPATH otherwise returns an empty string.
+func Infer(dir string) string {
+	src := filepath.Join(GOPATH, "src") + "/"
+	if !strings.HasPrefix(dir, src) {
 		return ""
 	}
-	modulePath := strings.TrimPrefix(path, src)
+	modulePath := strings.TrimPrefix(dir, src)
 	return modulePath
 }
